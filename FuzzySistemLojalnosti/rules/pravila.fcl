@@ -1,0 +1,154 @@
+FUNCTION_BLOCK blok
+
+VAR_INPUT
+	potrosnja : REAL;
+	ucestalost : REAL;
+	redovnostPlacanja : REAL;
+	reklamacije : REAL;	
+	komunikacija : REAL;	
+	vremenskiKupac : REAL;	
+	preporuke : REAL;
+END_VAR
+
+VAR_OUTPUT
+	lojalnost : REAL;
+END_VAR
+
+FUZZIFY potrosnja
+	TERM mala := (0,1)(1500000,1)(2000000,0);
+	TERM dobra := TRAPE 1500000 3000000 3500000 4000000;
+	TERM odlicna := TRIAN 4000000 10000000 11000000 ;
+END_FUZZIFY
+
+FUZZIFY ucestalost
+	TERM retko := (0,1)(2.5,1)(5,0);
+	TERM cesto := (5,1)(10,1)(15,0);
+	TERM odlicna := (15,0)(18,1)(21,1);
+END_FUZZIFY
+
+FUZZIFY redovnostPlacanja
+	TERM uvekKasni := TRIAN 0 0.15 0.3;
+	TERM ponekadKasni := TRIAN 0.3 0.45 0.6;
+	TERM neKasni := TRIAN 0.6 0.8 1.1;
+END_FUZZIFY
+
+FUZZIFY reklamacije
+	TERM cesto := TRIAN 0 0.15 0.3;
+	TERM retko := TRIAN 0.3 0.45 0.6;
+	TERM nema := TRIAN 0.6 0.8 1.1;
+END_FUZZIFY
+
+FUZZIFY vremenskiKupac
+	TERM kratko := TRIAN 0 0.5 1;
+	TERM srednje := TRAPE 1 2 4.5 5;
+	TERM dugo := SIGM 1.5 7.1;
+END_FUZZIFY
+
+FUZZIFY preporuke
+	TERM malo := TRIAN 0 1 2;
+	TERM srednje := TRIAN 2 3.5 5;
+	TERM puno := SIGM 1.5 7.1;
+END_FUZZIFY
+
+FUZZIFY komunikacija
+	TERM losa := TRIAN 0 0.2 0.4;
+	TERM dobra := TRIAN 0.4 0.7 1.1;
+END_FUZZIFY
+
+DEFUZZIFY lojalnost
+	TERM nelojalan := TRIAN 0 0.2 0.4;
+	TERM brozana := (0.4,0)(0.75,1)(0.85,0);
+	TERM srebrna := TRAPE 0.85 0.9 0.95 1 ;
+	TERM zlatna :=TRIAN 1 1.2 1.4;
+	TERM dijamantska := TRAPE 1.4 1.5 1.7 2;
+	METHOD :COA;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK ruleBlok
+	AND : MIN;
+	ACT : MIN;
+	ACCU : MAX;
+	
+	RULE N1: IF preporuke IS malo AND potrosnja IS mala 
+				AND reklamacije IS cesto AND redovnostPlacanja IS uvekKasni
+				AND ucestalost IS retko AND vremenskiKupac IS kratko 
+				AND komunikacija IS losa
+				THEN lojalnost IS nelojalan WITH 5;
+	RULE N2: IF preporuke IS malo AND potrosnja IS mala 
+				AND komunikacija IS dobra
+				THEN lojalnost IS nelojalan;
+	RULE N3: IF potrosnja IS mala AND reklamacije IS cesto 
+				AND komunikacija IS losa
+				THEN lojalnost IS nelojalan;
+	RULE N4: IF redovnostPlacanja IS uvekKasni AND ucestalost IS retko 
+				THEN lojalnost IS nelojalan;						
+
+	RULE B1: IF  potrosnja IS dobra OR potrosnja IS odlicna  
+				AND redovnostPlacanja IS uvekKasni
+				AND ucestalost IS NOT retko 
+				THEN lojalnost IS brozana WITH 2;
+	RULE B2: IF preporuke IS malo AND potrosnja IS dobra 
+				 AND redovnostPlacanja IS neKasni
+				THEN lojalnost IS brozana WITH 2;
+	RULE B3: IF preporuke IS puno AND potrosnja IS mala 
+				THEN lojalnost IS brozana WITH 3;
+	RULE B4: IF redovnostPlacanja IS uvekKasni AND ucestalost IS cesto 
+				AND potrosnja IS odlicna
+				THEN lojalnost IS brozana WITH 3;	
+				
+	RULE S1: IF preporuke IS srednje AND potrosnja IS dobra OR potrosnja IS odlicna 
+				AND reklamacije IS NOT cesto AND redovnostPlacanja IS NOT uvekKasni
+				THEN lojalnost IS srebrna;
+	RULE S2: IF preporuke IS malo AND potrosnja IS NOT mala 
+				AND reklamacije IS NOT cesto AND redovnostPlacanja IS neKasni
+				AND ucestalost IS NOT retko
+				THEN lojalnost IS srebrna;
+	RULE S3: IF preporuke IS puno AND potrosnja IS mala 
+				AND reklamacije IS nema AND redovnostPlacanja IS neKasni
+				AND ucestalost IS odlicna
+				THEN lojalnost IS srebrna;
+				
+	RULE Z1: IF preporuke IS puno AND potrosnja IS NOT mala 
+				AND reklamacije IS nema AND redovnostPlacanja IS neKasni
+				AND ucestalost IS odlicna AND vremenskiKupac IS NOT dugo 
+				AND komunikacija IS dobra
+				THEN lojalnost IS zlatna;
+	RULE Z2: IF preporuke IS NOT puno AND potrosnja IS dobra 
+				AND reklamacije IS retko AND redovnostPlacanja IS neKasni
+				AND ucestalost IS odlicna AND vremenskiKupac IS dugo 
+				AND komunikacija IS dobra
+				THEN lojalnost IS zlatna WITH 3;
+	RULE Z3: IF preporuke IS srednje AND potrosnja IS odlicna 
+				AND reklamacije IS retko OR reklamacije IS nema  AND redovnostPlacanja IS neKasni
+				AND ucestalost IS odlicna AND vremenskiKupac IS NOT kratko 
+				AND komunikacija IS dobra
+				THEN lojalnost IS zlatna;
+	RULE Z4: IF preporuke IS puno AND potrosnja IS mala
+				AND reklamacije IS nema AND redovnostPlacanja IS neKasni
+				AND ucestalost IS odlicna AND vremenskiKupac IS dugo 
+				AND komunikacija IS dobra
+				THEN lojalnost IS zlatna WITH 4;
+				
+	RULE D1: IF preporuke IS puno AND potrosnja IS odlicna 
+				AND reklamacije IS nema AND redovnostPlacanja IS neKasni
+				AND ucestalost IS odlicna AND vremenskiKupac IS dugo 
+				AND komunikacija IS dobra
+				THEN lojalnost IS dijamantska WITH 5;
+	RULE D2: IF potrosnja IS odlicna 
+				AND ucestalost IS odlicna 
+				THEN lojalnost IS dijamantska WITH 5;		
+				
+	RULE P1: IF potrosnja IS odlicna THEN lojalnost IS zlatna WITH 3;		
+	RULE P2: IF ucestalost IS odlicna THEN lojalnost IS zlatna WITH 2;		
+	RULE P3: IF potrosnja IS odlicna AND reklamacije IS nema AND redovnostPlacanja IS neKasni 
+				THEN lojalnost IS dijamantska WITH 3;		
+	RULE P4: IF potrosnja IS mala 
+				THEN lojalnost IS nelojalan;	
+	RULE P5: IF ucestalost IS odlicna 
+				THEN lojalnost IS zlatna WITH 3;	
+				
+END_RULEBLOCK
+
+
+END_FUNCTION_BLOCK
