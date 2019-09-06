@@ -8,6 +8,8 @@ import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import net.sourceforge.jFuzzyLogic.rule.Rule;
 import net.sourceforge.jFuzzyLogic.rule.RuleBlock;
 import net.sourceforge.jFuzzyLogic.rule.Variable;
+import neuronske.TestiranjeSvihVarijabli;
+
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -67,13 +69,14 @@ public class Proba {
 	}
 
 	public void GenerisiTreningPodatke() {
-		TestiranjePodataka();
-		//UzimanjePodataka();
+		
+		//TestiranjePodataka();
+		UzimanjePodataka();
 	}
 
 	public void appendStrToFile(String str) {
 		try {
-			String fileName = "trening.txt";
+			String fileName = "treningL.txt";
 // Open given file in append mode. 
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
 			out.write(str + "\n");
@@ -88,7 +91,7 @@ public class Proba {
 			return "nelojalan";
 		}
 		if (pVrednost >= 0.4 && pVrednost < 0.85) {
-			return "brozana";
+			return "bronzana";
 		}
 		if (pVrednost >= 0.85 && pVrednost < 1) {
 			return "srebrna";
@@ -97,7 +100,7 @@ public class Proba {
 			return "zlatna";
 		}
 		if (pVrednost >= 1.4 && pVrednost < 2) {
-			return "zlatna";
+			return "dijamantska";
 		}
 		return "NA";
 	}
@@ -126,6 +129,7 @@ public class Proba {
 		ErrorFunction errFun = new ErrorFunctionLojalnost("trening.txt");
 		OptimizationDeltaJump optimization = new OptimizationDeltaJump(ruleBlock, errFun, parameterList);
 		optimization.optimize();
+		
 		//JFuzzyChart.get().chart(fis.getVariable("lojalnost"), fis.getVariable("lojalnost").getDefuzzifier(), true);
 	}
 
@@ -153,9 +157,9 @@ public class Proba {
 					// System.out.println(""+rs.getInt(2)+","+fis.getVariable("lojalnost").getValue());
 
 					// System.out.println(vratiSkup(fis.getVariable("lojalnost").getValue()));
-					appendStrToFile(rs.getDouble(3) + "," + rs.getInt(4) + "," + rs.getDouble(5) + ","
+					appendStrToFile(/*rs.getDouble(3) + "," + rs.getInt(4) + "," + rs.getDouble(5) + ","
 							+ rs.getDouble(6) + "," + rs.getInt(7) + "," + rs.getInt(9) + "," + rs.getInt(8)
-							+ "," + fis.getVariable("lojalnost").getValue()+"," + vratiSkup(fis.getVariable("lojalnost").getValue()));
+							+ "," +*/ fis.getVariable("lojalnost").getValue()+"," + vratiSkup(fis.getVariable("lojalnost").getValue()));
 
 					// System.out.println(fis.getVariable("lojalnost").getValue());
 				}
