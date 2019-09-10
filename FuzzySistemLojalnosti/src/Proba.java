@@ -76,7 +76,7 @@ public class Proba {
 
 	public void appendStrToFile(String str) {
 		try {
-			String fileName = "treningL.txt";
+			String fileName = "testL.txt";
 // Open given file in append mode. 
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
 			out.write(str + "\n");
@@ -151,7 +151,7 @@ public class Proba {
 			rs = stmt.executeQuery(SQL);
 
 			while (rs.next()) {
-				if (rs.getInt(1) < 924) {
+				if (rs.getInt(1) > 923) {
 					SetovanjeVrednosti(rs.getDouble(3), rs.getInt(4), rs.getDouble(5), rs.getDouble(6),
 							rs.getInt(7), rs.getInt(8), rs.getInt(9));
 					// System.out.println(""+rs.getInt(2)+","+fis.getVariable("lojalnost").getValue());
