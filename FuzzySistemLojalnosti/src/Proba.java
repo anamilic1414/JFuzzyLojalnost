@@ -1,18 +1,10 @@
 import net.sourceforge.jFuzzyLogic.*;
 import net.sourceforge.jFuzzyLogic.Gpr;
-import net.sourceforge.jFuzzyLogic.optimization.ErrorFunction;
-import net.sourceforge.jFuzzyLogic.optimization.OptimizationDeltaJump;
-import net.sourceforge.jFuzzyLogic.optimization.Parameter;
 import net.sourceforge.jFuzzyLogic.plot.JDialogFis;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import net.sourceforge.jFuzzyLogic.rule.Rule;
-import net.sourceforge.jFuzzyLogic.rule.RuleBlock;
-import net.sourceforge.jFuzzyLogic.rule.Variable;
-
 import java.io.*;
 import java.sql.*;
-import java.util.*;
-
 public class Proba {
 
 	FIS fis;
