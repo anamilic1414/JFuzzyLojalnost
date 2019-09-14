@@ -51,8 +51,8 @@ FUZZIFY preporuke
 END_FUZZIFY
 
 FUZZIFY komunikacija
-	TERM losa := TRIAN 0 0.2 0.4;
-	TERM dobra := TRIAN 0.4 0.7 1.1;
+	TERM losa := 0;
+	TERM dobra := 1;
 END_FUZZIFY
 
 DEFUZZIFY lojalnost
